@@ -206,6 +206,14 @@ function App() {
     }
   };
 
+  const handleBack = () => {
+    setHasAnalyzed(false);
+    setRecommendations([]);
+    setAnalysisNote('');
+    setResumeFile(null);
+    setJobLink('');
+  };
+
   return (
     <div className="min-h-screen bg-black">
       <header className="border-b border-gray-800">
@@ -279,6 +287,15 @@ function App() {
                   <p className="text-yellow-400 text-sm">{analysisNote}</p>
                 </div>
               )}
+            </div>
+            {/* Back Button */}
+            <div className="text-left">
+              <button
+                onClick={handleBack}
+                className="btn-secondary mb-4 px-4 py-2 rounded bg-gray-700 text-white hover:bg-gray-600 transition"
+              >
+                ← Back
+              </button>
             </div>
             <div className="space-y-4">
               {recommendations.map((recommendation) => (
