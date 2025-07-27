@@ -2,6 +2,7 @@
   "name": "resume-recommender-frontend",
   "version": "1.0.0",
   "private": true,
+  "proxy": "http://localhost:3050",
   "dependencies": {
     "@types/node": "^20.0.0",
     "@types/react": "^18.0.0",

@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
-import { Upload, Link, Send, FileText, Star, CheckCircle, AlertCircle, Lightbulb, MessageCircle } from 'lucide-react';
+import { FileText, Upload, Link, Send, AlertCircle, CheckCircle, Lightbulb, TrendingUp, Target, Zap } from 'lucide-react';
 import ResumeUpload from './components/ResumeUpload';
 import JobLinkInput from './components/JobLinkInput';
-import ChatInterface from './components/ChatInterface';
 import RecommendationCard from './components/RecommendationCard';
+import ChatInterface from './components/ChatInterface';
 
 interface Recommendation {
   id: string;
-  type: 'rating' | 'missing' | 'improvement' | 'suggestion';
+  type: 'rating' | 'missing' | 'improvement' | 'suggestion' | 'score' | 'target' | 'skills' | 'experience' | 'content' | 'examples' | 'formatting';
   title: string;
   content: string;
   icon: React.ReactNode;
@@ -18,8 +18,138 @@ function App() {
   const [resumeFile, setResumeFile] = useState<File | null>(null);
   const [jobLink, setJobLink] = useState('');
   const [isAnalyzing, setIsAnalyzing] = useState(false);
-  const [recommendations, setRecommendations] = useState<Recommendation[]>([]);
   const [hasAnalyzed, setHasAnalyzed] = useState(false);
+  const [recommendations, setRecommendations] = useState<Recommendation[]>([]);
+  const [analysisNote, setAnalysisNote] = useState<string>('');
+
+  const parseAnalysisResult = (aiResponse: string): Recommendation[] => {
+    console.log('Parsing AI response:', aiResponse.substring(0, 500) + '...');
+    const recommendations: Recommendation[] = [];
+    const scoreMatch = aiResponse.match(/\*\*1\. Current Score \(0-100\):\*\* (\d+)/);
+    const targetMatch = aiResponse.match(/\*\*2\. Target Score:\*\* (\d+)/);
+    
+    console.log('Score match:', scoreMatch);
+    console.log('Target match:', targetMatch);
+    
+    if (scoreMatch && targetMatch) {
+      recommendations.push({
+        id: 'score',
+        type: 'score',
+        title: 'Resume Score',
+        content: `Current Score: ${scoreMatch[1]}/100 | Target Score: ${targetMatch[1]}/100`,
+        icon: <TrendingUp className="w-5 h-5" />,
+        color: 'text-green-500'
+      });
+    }
+
+    const missingSkillsMatch = aiResponse.match(/\*\*3\. Missing Skills:\*\*([\s\S]*?)(?=\*\*4\.|$)/);
+    if (missingSkillsMatch) {
+      const skillsContent = missingSkillsMatch[1].trim();
+      if (skillsContent && skillsContent !== '*') {
+        const cleanedContent = cleanFormatting(skillsContent);
+        if (cleanedContent) {
+          recommendations.push({
+            id: 'missing-skills',
+            type: 'missing',
+            title: 'Missing Skills',
+            content: cleanedContent,
+            icon: <AlertCircle className="w-5 h-5" />,
+            color: 'text-red-500'
+          });
+        }
+      }
+    }
+
+    const experienceMatch = aiResponse.match(/\*\*4\. Experience Gaps:\*\*([\s\S]*?)(?=\*\*5\.|$)/);
+    if (experienceMatch) {
+      const experienceContent = experienceMatch[1].trim();
+      if (experienceContent && experienceContent !== '*') {
+        const cleanedContent = cleanFormatting(experienceContent);
+        if (cleanedContent) {
+          recommendations.push({
+            id: 'experience-gaps',
+            type: 'experience',
+            title: 'Experience Gaps',
+            content: cleanedContent,
+            icon: <Target className="w-5 h-5" />,
+            color: 'text-orange-500'
+          });
+        }
+      }
+    }
+
+    const improvementsMatch = aiResponse.match(/\*\*5\. Content Improvements:\*\*([\s\S]*?)(?=\*\*6\.|$)/);
+    if (improvementsMatch) {
+      const improvementsContent = improvementsMatch[1].trim();
+      if (improvementsContent && improvementsContent !== '*') {
+        const cleanedContent = cleanFormatting(improvementsContent);
+        if (cleanedContent) {
+          recommendations.push({
+            id: 'content-improvements',
+            type: 'improvement',
+            title: 'Content Improvements',
+            content: cleanedContent,
+            icon: <CheckCircle className="w-5 h-5" />,
+            color: 'text-blue-500'
+          });
+        }
+      }
+    }
+
+    const examplesMatch = aiResponse.match(/\*\*6\. Specific Examples:\*\*([\s\S]*?)(?=\*\*7\.|$)/);
+    if (examplesMatch) {
+      const examplesContent = examplesMatch[1].trim();
+      if (examplesContent && examplesContent !== '*') {
+        const cleanedContent = cleanFormatting(examplesContent);
+        if (cleanedContent) {
+          recommendations.push({
+            id: 'specific-examples',
+            type: 'examples',
+            title: 'Specific Examples',
+            content: cleanedContent,
+            icon: <Lightbulb className="w-5 h-5" />,
+            color: 'text-purple-500'
+          });
+        }
+      }
+    }
+
+    const formattingMatch = aiResponse.match(/\*\*7\. Formatting Suggestions:\*\*([\s\S]*?)(?=\*\*|$)/);
+    if (formattingMatch) {
+      const formattingContent = formattingMatch[1].trim();
+      if (formattingContent && formattingContent !== '*') {
+        const cleanedContent = cleanFormatting(formattingContent);
+        if (cleanedContent) {
+          recommendations.push({
+            id: 'formatting-suggestions',
+            type: 'formatting',
+            title: 'Formatting Suggestions',
+            content: cleanedContent,
+            icon: <Zap className="w-5 h-5" />,
+            color: 'text-yellow-500'
+          });
+        }
+      }
+    }
+
+    return recommendations;
+  };
+
+  const cleanFormatting = (content: string): string => {
+    return content
+      .replace(/\*\*/g, '')
+      .replace(/\*/g, '')
+      .replace(/^[•\*]\s*/gm, '')
+      .replace(/^\s*[•\*]\s*/gm, '')
+      .replace(/\n\s*\n/g, '\n\n')
+      .replace(/^\s+|\s+$/gm, '')
+      .replace(/^([^:]+):/gm, '**$1:**')
+      .split('\n')
+      .filter(line => line.trim().length > 0)
+      .map(line => line.trim())
+      .join('\n\n')
+      .trim();
+  };
 
   const handleAnalyze = async () => {
     if (!resumeFile || !jobLink) {
@@ -28,46 +158,52 @@ function App() {
     }
 
     setIsAnalyzing(true);
-    setTimeout(() => {
-      const mockRecommendations: Recommendation[] = [
-        {
-          id: '1',
-          type: 'rating',
-          title: 'Current Resume Score',
-          content: 'Your resume currently scores 65/100. With the suggested improvements, you can reach 85-90/100.',
-          icon: <Star className="w-5 h-5" />,
-          color: 'text-beige-500'
-        },
-        {
-          id: '2',
-          type: 'missing',
-          title: 'Missing Key Skills',
-          content: 'Add specific technical skills mentioned in the job posting: React.js, TypeScript, AWS, Docker',
-          icon: <AlertCircle className="w-5 h-5" />,
-          color: 'text-red-400'
-        },
-        {
-          id: '3',
-          type: 'improvement',
-          title: 'Experience Enhancement',
-          content: 'Quantify your achievements with specific metrics and numbers to make your experience more impactful',
-          icon: <CheckCircle className="w-5 h-5" />,
-          color: 'text-green-400'
-        },
-        {
-          id: '4',
-          type: 'suggestion',
-          title: 'Professional Summary',
-          content: 'Add a compelling professional summary at the top that directly addresses the job requirements',
-          icon: <Lightbulb className="w-5 h-5" />,
-          color: 'text-blue-400'
-        }
-      ];
+    setAnalysisNote('');
+    
+    try {
+      const formData = new FormData();
+      formData.append('resume', resumeFile);
+      formData.append('job_link', jobLink);
+
+      console.log('Sending request to /analyze...');
+      console.log('Resume file:', resumeFile.name);
+      console.log('Job link:', jobLink);
+
+      const response = await fetch('/analyze', {
+        method: 'POST',
+        body: formData,
+      });
+
+      console.log('Response status:', response.status);
+      console.log('Response ok:', response.ok);
+
+      if (!response.ok) {
+        throw new Error(`Analysis failed: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      console.log('Backend response:', data);
       
-      setRecommendations(mockRecommendations);
-      setHasAnalyzed(true);
+      if (data.status === 'success') {
+        if (data.message && data.message.includes("Since the job posting content couldn't be extracted automatically")) {
+          setAnalysisNote('Note: Job posting content couldn\'t be extracted automatically. Analysis based on general resume optimization best practices.');
+        }
+        
+        console.log('Parsing analysis result...');
+        const parsedRecommendations = parseAnalysisResult(data.message || '');
+        console.log('Parsed recommendations:', parsedRecommendations);
+        setRecommendations(parsedRecommendations);
+        setHasAnalyzed(true);
+      } else {
+        console.error('Analysis failed:', data.error);
+        alert('Analysis failed: ' + (data.error || 'Unknown error'));
+      }
+    } catch (error) {
+      console.error('Analysis error:', error);
+      alert('Analysis failed. Please try again.');
+    } finally {
       setIsAnalyzing(false);
-    }, 3000);
+    }
   };
 
   return (
@@ -138,6 +274,11 @@ function App() {
             <div className="text-center mb-8">
               <h2 className="text-3xl font-bold text-white mb-2">Your Recommendations</h2>
               <p className="text-gray-400">Based on your resume and the job posting</p>
+              {analysisNote && (
+                <div className="mt-4 p-3 bg-yellow-900/20 border border-yellow-600/30 rounded-lg">
+                  <p className="text-yellow-400 text-sm">{analysisNote}</p>
+                </div>
+              )}
             </div>
             <div className="space-y-4">
               {recommendations.map((recommendation) => (

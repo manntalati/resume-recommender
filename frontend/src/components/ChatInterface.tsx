@@ -34,26 +34,41 @@ const ChatInterface: React.FC = () => {
     setInputValue('');
     setIsTyping(true);
 
-    setTimeout(() => {
-      const botResponses = [
-        "That's a great question! Based on the job requirements, I'd recommend focusing on quantifying your achievements with specific metrics.",
-        "For that specific skill, I suggest adding a brief project example that demonstrates your proficiency.",
-        "Your experience is relevant, but try to use action verbs and include the impact of your work.",
-        "Consider adding a professional summary that directly addresses the key requirements mentioned in the job posting."
-      ];
-      
-      const randomResponse = botResponses[Math.floor(Math.random() * botResponses.length)];
+    try {
+      const response = await fetch('/chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ message: inputValue }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Chat failed: ${response.statusText}`);
+      }
+
+      const data = await response.json();
       
       const botMessage: Message = {
         id: (Date.now() + 1).toString(),
-        text: randomResponse,
+        text: data.text,
         sender: 'bot',
         timestamp: new Date()
       };
 
       setMessages(prev => [...prev, botMessage]);
+    } catch (error) {
+      console.error('Chat error:', error);
+      const errorMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        text: 'Sorry, I encountered an error. Please try again.',
+        sender: 'bot',
+        timestamp: new Date()
+      };
+      setMessages(prev => [...prev, errorMessage]);
+    } finally {
       setIsTyping(false);
-    }, 1500);
+    }
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
