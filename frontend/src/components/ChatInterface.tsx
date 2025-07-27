@@ -8,7 +8,12 @@ interface Message {
   timestamp: Date;
 }
 
-const ChatInterface: React.FC = () => {
+interface ChatInterfaceProps {
+  resumeContent: string;
+  jobContent: string;
+}
+
+const ChatInterface: React.FC<ChatInterfaceProps> = ({ resumeContent, jobContent }) => {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
@@ -40,7 +45,11 @@ const ChatInterface: React.FC = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ message: inputValue }),
+        body: JSON.stringify({ 
+          message: inputValue,
+          resume_content: resumeContent,
+          job_content: jobContent
+        }),
       });
 
       if (!response.ok) {

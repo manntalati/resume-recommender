@@ -1,10 +1,11 @@
-from flask import Flask, request, jsonify, send_from_directory
+from flask import Flask, request, jsonify, send_from_directory, session
 from flask_cors import CORS
 import os
 from werkzeug.utils import secure_filename
-from main import job_posting, extract_resume_info, analyze_resume_and_job
+from main import job_posting, extract_resume_info, analyze_resume_and_job, chat_with_ai
 
 app = Flask(__name__, static_folder='frontend/build', static_url_path='')
+app.secret_key = 'resume-recommender-secret-key'
 CORS(app)
 
 UPLOAD_FOLDER = 'temp_uploads'
@@ -57,7 +58,9 @@ def analyze_resume():
                 ai_response = analysis_result['analysis']
                 return jsonify({
                     'status': 'success',
-                    'message': ai_response
+                    'message': ai_response,
+                    'resume_content': resume_info,
+                    'job_content': job_info
                 })
             else:
                 print(f"Analysis failed: {analysis_result['error']}")
@@ -72,7 +75,30 @@ def analyze_resume():
     except Exception as e:
         print(f"Error in analyze_resume: {str(e)}")
         return jsonify({'error': str(e)}), 500
-
+    
+@app.route('/chat', methods=['POST'])
+def chat():
+    data = request.get_json()
+    message = data.get('message', '')
+    resume_content = data.get('resume_content', '')
+    job_content = data.get('job_content', '')
+    
+    if not resume_content or not job_content:
+        return jsonify({'error': 'Missing resume or job data. Please analyze a resume first.'}), 400
+    
+    chat_result = chat_with_ai(resume_content, message, None, job_content)
+    
+    if chat_result['success']:
+        response = {
+            'id': str(len(message) + 1),
+            'text': chat_result['response'],
+            'sender': 'bot',
+            'timestamp': '2024-01-01T00:00:00Z'
+        }
+        return jsonify(response)
+    else:
+        return jsonify({'error': chat_result['error']}), 500
+    
 @app.route('/<path:path>')
 def catch_all(path):
     if path.startswith('api/'):

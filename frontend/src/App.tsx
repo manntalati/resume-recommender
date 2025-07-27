@@ -21,15 +21,13 @@ function App() {
   const [hasAnalyzed, setHasAnalyzed] = useState(false);
   const [recommendations, setRecommendations] = useState<Recommendation[]>([]);
   const [analysisNote, setAnalysisNote] = useState<string>('');
+  const [resumeContent, setResumeContent] = useState<string>('');
+  const [jobContent, setJobContent] = useState<string>('');
 
   const parseAnalysisResult = (aiResponse: string): Recommendation[] => {
-    console.log('Parsing AI response:', aiResponse.substring(0, 500) + '...');
     const recommendations: Recommendation[] = [];
     const scoreMatch = aiResponse.match(/\*\*1\. Current Score \(0-100\):\*\* (\d+)/);
     const targetMatch = aiResponse.match(/\*\*2\. Target Score:\*\* (\d+)/);
-    
-    console.log('Score match:', scoreMatch);
-    console.log('Target match:', targetMatch);
     
     if (scoreMatch && targetMatch) {
       recommendations.push({
@@ -165,41 +163,36 @@ function App() {
       formData.append('resume', resumeFile);
       formData.append('job_link', jobLink);
 
-      console.log('Sending request to /analyze...');
-      console.log('Resume file:', resumeFile.name);
-      console.log('Job link:', jobLink);
-
       const response = await fetch('/analyze', {
         method: 'POST',
         body: formData,
       });
-
-      console.log('Response status:', response.status);
-      console.log('Response ok:', response.ok);
 
       if (!response.ok) {
         throw new Error(`Analysis failed: ${response.statusText}`);
       }
 
       const data = await response.json();
-      console.log('Backend response:', data);
       
       if (data.status === 'success') {
         if (data.message && data.message.includes("Since the job posting content couldn't be extracted automatically")) {
           setAnalysisNote('Note: Job posting content couldn\'t be extracted automatically. Analysis based on general resume optimization best practices.');
         }
         
-        console.log('Parsing analysis result...');
+        if (data.resume_content) {
+          setResumeContent(data.resume_content);
+        }
+        if (data.job_content) {
+          setJobContent(data.job_content);
+        }
+        
         const parsedRecommendations = parseAnalysisResult(data.message || '');
-        console.log('Parsed recommendations:', parsedRecommendations);
         setRecommendations(parsedRecommendations);
         setHasAnalyzed(true);
       } else {
-        console.error('Analysis failed:', data.error);
         alert('Analysis failed: ' + (data.error || 'Unknown error'));
       }
     } catch (error) {
-      console.error('Analysis error:', error);
       alert('Analysis failed. Please try again.');
     } finally {
       setIsAnalyzing(false);
@@ -210,8 +203,10 @@ function App() {
     setHasAnalyzed(false);
     setRecommendations([]);
     setAnalysisNote('');
-    setResumeFile(null);
     setJobLink('');
+    setIsAnalyzing(false);
+    setResumeContent('');
+    setJobContent('');
   };
 
   return (
@@ -306,7 +301,10 @@ function App() {
               ))}
             </div>
             <div className="mt-12">
-              <ChatInterface />
+              <ChatInterface 
+                resumeContent={resumeContent}
+                jobContent={jobContent}
+              />
             </div>
           </div>
         )}
