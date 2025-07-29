@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { FileText, Upload, Link, Send, AlertCircle, CheckCircle, Lightbulb, TrendingUp, Target, Zap } from 'lucide-react';
+import { FileText, Upload, Link, Send, AlertCircle, CheckCircle, Lightbulb, TrendingUp, Target, Zap, Sparkles, ArrowLeft } from 'lucide-react';
 import ResumeUpload from './components/ResumeUpload';
 import JobLinkInput from './components/JobLinkInput';
 import RecommendationCard from './components/RecommendationCard';
 import ChatInterface from './components/ChatInterface';
+import AnimatedBackground from './components/AnimatedBackground';
 
 interface Recommendation {
   id: string;
@@ -151,7 +152,7 @@ function App() {
 
   const handleAnalyze = async () => {
     if (!resumeFile || !jobLink) {
-      alert('Please upload a resume and provide a job posting link');
+      showNotification('Please upload a resume and provide a job posting link', 'error');
       return;
     }
 
@@ -189,14 +190,32 @@ function App() {
         const parsedRecommendations = parseAnalysisResult(data.message || '');
         setRecommendations(parsedRecommendations);
         setHasAnalyzed(true);
+        showNotification('Analysis completed successfully!', 'success');
       } else {
-        alert('Analysis failed: ' + (data.error || 'Unknown error'));
+        showNotification('Analysis failed: ' + (data.error || 'Unknown error'), 'error');
       }
     } catch (error) {
-      alert('Analysis failed. Please try again.');
+      showNotification('Analysis failed. Please try again.', 'error');
     } finally {
       setIsAnalyzing(false);
     }
+  };
+
+  const showNotification = (message: string, type: 'success' | 'error') => {
+    const notification = document.createElement('div');
+    notification.className = `notification ${type} animate-slide-up`;
+    notification.innerHTML = `
+      <div class="flex items-center space-x-3">
+        ${type === 'success' ? '<div class="w-5 h-5 text-accent-secondary"><svg fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg></div>' : '<div class="w-5 h-5 text-accent-primary"><svg fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg></div>'}
+        <span class="text-white">${message}</span>
+      </div>
+    `;
+    
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+      notification.remove();
+    }, 3000);
   };
 
   const handleBack = () => {
@@ -210,105 +229,139 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen bg-black">
-      <header className="border-b border-gray-800">
-        <div className="max-w-4xl mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <FileText className="w-8 h-8 text-beige-500" />
-              <h1 className="text-2xl font-bold text-white">Resume Recommender</h1>
-            </div>
-            <p className="text-gray-400 text-sm">AI-Powered Resume Optimization</p>
-          </div>
-        </div>
-      </header>
-
-      <main className="max-w-4xl mx-auto px-4 py-8">
-        {!hasAnalyzed ? (
-          <div className="space-y-8">
-            <div className="text-center mb-8">
-              <h2 className="text-3xl font-bold text-white mb-2">Optimize Your Resume</h2>
-              <p className="text-gray-400">Upload your resume and provide a job posting link to get personalized recommendations</p>
-            </div>
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-              <div className="card">
-                <h3 className="text-xl font-semibold text-white mb-4 flex items-center">
-                  <Upload className="w-5 h-5 mr-2 text-beige-500" />
-                  Upload Your Resume
-                </h3>
-                <ResumeUpload 
-                  onFileSelect={setResumeFile} 
-                  selectedFile={resumeFile}
-                />
-              </div>
-              <div className="card">
-                <h3 className="text-xl font-semibold text-white mb-4 flex items-center">
-                  <Link className="w-5 h-5 mr-2 text-beige-500" />
-                  Job Posting Link
-                </h3>
-                <JobLinkInput 
-                  value={jobLink}
-                  onChange={setJobLink}
-                />
-              </div>
-            </div>
-            <div className="text-center">
-              <button
-                onClick={handleAnalyze}
-                disabled={!resumeFile || !jobLink || isAnalyzing}
-                className="btn-primary disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center mx-auto"
-              >
-                {isAnalyzing ? (
-                  <>
-                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-black mr-2"></div>
-                    Analyzing...
-                  </>
-                ) : (
-                  <>
-                    <Send className="w-5 h-5 mr-2" />
-                    Get Recommendations
-                  </>
-                )}
-              </button>
-            </div>
-          </div>
-        ) : (
-          <div className="space-y-8">
-            <div className="text-center mb-8">
-              <h2 className="text-3xl font-bold text-white mb-2">Your Recommendations</h2>
-              <p className="text-gray-400">Based on your resume and the job posting</p>
-              {analysisNote && (
-                <div className="mt-4 p-3 bg-yellow-900/20 border border-yellow-600/30 rounded-lg">
-                  <p className="text-yellow-400 text-sm">{analysisNote}</p>
+    <div className="min-h-screen relative overflow-hidden">
+      <AnimatedBackground />
+      
+      <div className="relative z-10">
+        <header className="glass-card border-b border-white/10">
+          <div className="max-w-6xl mx-auto px-6 py-6">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-4">
+                <div className="relative">
+                  <div className="absolute inset-0 bg-gradient-to-r from-accent-primary to-accent-secondary rounded-full blur-xl opacity-50 animate-pulse-slow" />
+                  <div className="relative bg-white/5 backdrop-blur-xl rounded-full p-3 border border-white/10">
+                    <FileText className="w-8 h-8 text-accent-primary" />
+                  </div>
                 </div>
-              )}
-            </div>
-            {/* Back Button */}
-            <div className="text-left">
-              <button
-                onClick={handleBack}
-                className="btn-secondary mb-4 px-4 py-2 rounded bg-gray-700 text-white hover:bg-gray-600 transition"
-              >
-                ← Back
-              </button>
-            </div>
-            <div className="space-y-4">
-              {recommendations.map((recommendation) => (
-                <RecommendationCard
-                  key={recommendation.id}
-                  recommendation={recommendation}
-                />
-              ))}
-            </div>
-            <div className="mt-12">
-              <ChatInterface 
-                resumeContent={resumeContent}
-                jobContent={jobContent}
-              />
+                <div>
+                  <h1 className="text-3xl font-bold text-white gradient-text">
+                    Resume Recommender
+                  </h1>
+                  <p className="text-neutral-400 text-sm">AI-Powered Resume Optimization</p>
+                </div>
+              </div>
             </div>
           </div>
-        )}
-      </main>
+        </header>
+
+        <main className="max-w-6xl mx-auto px-6 py-12">
+          {!hasAnalyzed ? (
+            <div className="space-y-12 animate-fade-in">
+              <div className="text-center mb-12">
+                <div className="relative inline-block mb-8">
+                  <div className="absolute inset-0 bg-gradient-to-r from-accent-primary via-accent-secondary to-accent-tertiary rounded-full blur-3xl opacity-30 animate-pulse-slow" />
+                  <div className="relative bg-white/5 backdrop-blur-xl rounded-full p-8 border border-white/10">
+                    <Sparkles className="w-16 h-16 text-accent-primary mx-auto animate-bounce-slow" />
+                  </div>
+                </div>
+                
+                <h2 className="text-5xl font-bold text-white mb-6 gradient-text">
+                  Optimize Your Resume
+                </h2>
+                <p className="text-xl text-neutral-300 max-w-2xl mx-auto leading-relaxed">
+                  Upload your resume and provide a job posting link to get personalized AI-powered recommendations
+                </p>
+              </div>
+
+              <div className="card-grid">
+                <div className="card-hover">
+                  <h3 className="text-2xl font-semibold text-white mb-6 flex items-center">
+                    <Upload className="w-6 h-6 mr-3 text-accent-primary" />
+                    Upload Your Resume
+                  </h3>
+                  <ResumeUpload 
+                    onFileSelect={setResumeFile} 
+                    selectedFile={resumeFile}
+                  />
+                </div>
+                
+                <div className="card-hover">
+                  <h3 className="text-2xl font-semibold text-white mb-6 flex items-center">
+                    <Link className="w-6 h-6 mr-3 text-accent-secondary" />
+                    Job Posting Link
+                  </h3>
+                  <JobLinkInput 
+                    value={jobLink}
+                    onChange={setJobLink}
+                  />
+                </div>
+              </div>
+
+              <div className="text-center">
+                <button
+                  onClick={handleAnalyze}
+                  disabled={!resumeFile || !jobLink || isAnalyzing}
+                  className="btn-gradient disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center mx-auto text-lg px-12 py-6"
+                >
+                  {isAnalyzing ? (
+                    <>
+                      <div className="loading-spinner mr-4"></div>
+                      Analyzing...
+                    </>
+                  ) : (
+                    <>
+                      <Send className="w-6 h-6 mr-3" />
+                      Get AI Recommendations
+                    </>
+                  )}
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div className="space-y-12 animate-fade-in">
+              <div className="text-center mb-12">
+                <h2 className="text-4xl font-bold text-white mb-4 gradient-text">
+                  Your AI Analysis
+                </h2>
+                <p className="text-neutral-400 text-lg">
+                  Based on your resume and the job posting
+                </p>
+                {analysisNote && (
+                  <div className="mt-6 glass-card p-4 border-l-4 border-accent-tertiary">
+                    <p className="text-accent-tertiary text-sm">{analysisNote}</p>
+                  </div>
+                )}
+              </div>
+
+              <div className="text-left">
+                <button
+                  onClick={handleBack}
+                  className="btn-secondary flex items-center space-x-2 px-6 py-3 rounded-xl"
+                >
+                  <ArrowLeft className="w-5 h-5" />
+                  <span>Start Over</span>
+                </button>
+              </div>
+
+              <div className="card-grid">
+                {recommendations.map((recommendation) => (
+                  <RecommendationCard
+                    key={recommendation.id}
+                    recommendation={recommendation}
+                  />
+                ))}
+              </div>
+
+              <div className="mt-16">
+                <ChatInterface 
+                  resumeContent={resumeContent}
+                  jobContent={jobContent}
+                />
+              </div>
+            </div>
+          )}
+        </main>
+      </div>
     </div>
   );
 }

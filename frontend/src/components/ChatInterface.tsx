@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Send, MessageCircle, Bot, User } from 'lucide-react';
+import React, { useState, useRef, useEffect } from 'react';
+import { Send, MessageCircle, Bot, User, Sparkles, Mic, Paperclip, Smile } from 'lucide-react';
 
 interface Message {
   id: string;
@@ -24,6 +24,16 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ resumeContent, jobContent
   ]);
   const [inputValue, setInputValue] = useState('');
   const [isTyping, setIsTyping] = useState(false);
+  const [isFocused, setIsFocused] = useState(false);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
 
   const handleSendMessage = async () => {
     if (!inputValue.trim()) return;
@@ -87,72 +97,162 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ resumeContent, jobContent
     }
   };
 
+  const formatMessage = (text: string) => {
+    return text.split('\n').map((line, index) => (
+      <p key={index} className="mb-2 last:mb-0">
+        {line}
+      </p>
+    ));
+  };
+
   return (
-    <div className="max-w-4xl mx-auto">
-      <div className="flex items-center space-x-2 mb-6">
-        <MessageCircle className="w-5 h-5 text-beige-500" />
-        <h2 className="text-xl font-semibold text-white">
-          Ask Follow-up Questions
-        </h2>
+    <div className="max-w-4xl mx-auto animate-fade-in">
+      <div className="glass-card p-6 mb-6">
+        <div className="flex items-center space-x-4">
+          <div className="relative">
+            <div className="absolute inset-0 bg-gradient-to-r from-neon-pink to-neon-blue rounded-full blur-lg opacity-50 animate-pulse-slow" />
+            <div className="relative bg-glass-white backdrop-blur-xl rounded-full p-3 border border-white/20">
+              <MessageCircle className="w-6 h-6 text-neon-pink" />
+            </div>
+          </div>
+          <div>
+            <h2 className="text-2xl font-bold text-white gradient-text">
+              AI Career Assistant
+            </h2>
+            <p className="text-gray-400 text-sm">
+              Ask me anything about your resume optimization
+            </p>
+          </div>
+        </div>
       </div>
-      <div className="space-y-0 mb-6">
-        {messages.map((message) => (
+
+      <div className="space-y-4 mb-6 max-h-96 overflow-y-auto">
+        {messages.map((message, index) => (
           <div
             key={message.id}
-            className={`chat-message ${message.sender === 'user' ? 'user' : 'bot'}`}
+            className={`animate-slide-up`}
+            style={{ animationDelay: `${index * 0.1}s` }}
           >
-            <div className="flex items-start space-x-4 max-w-3xl mx-auto">
-              {message.sender === 'bot' && (
-                <Bot className="w-6 h-6 text-beige-500 flex-shrink-0 mt-1" />
-              )}
-              <div className="flex-1">
-                <p className="text-white leading-relaxed">{message.text}</p>
-                <p className="text-xs text-gray-500 mt-2">
-                  {message.timestamp.toLocaleTimeString([], { 
-                    hour: '2-digit', 
-                    minute: '2-digit' 
-                  })}
-                </p>
+            <div className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
+              <div className={`
+                max-w-3xl rounded-2xl p-4 relative group
+                ${message.sender === 'user' 
+                  ? 'glass-card ml-12' 
+                  : 'neumorphic-card mr-12'
+                }
+              `}>
+                <div className="flex items-center space-x-2 mb-2">
+                  {message.sender === 'bot' && (
+                    <div className="relative">
+                      <div className="absolute inset-0 bg-neon-blue rounded-full blur-sm animate-pulse" />
+                      <div className="relative bg-glass-white backdrop-blur-xl rounded-full p-1 border border-white/20">
+                        <Bot className="w-4 h-4 text-neon-blue" />
+                      </div>
+                    </div>
+                  )}
+                  <span className="text-xs text-gray-400">
+                    {message.sender === 'user' ? 'You' : 'AI Assistant'}
+                  </span>
+                  <span className="text-xs text-gray-500">
+                    {message.timestamp.toLocaleTimeString([], { 
+                      hour: '2-digit', 
+                      minute: '2-digit' 
+                    })}
+                  </span>
+                </div>
+
+                <div className="text-gray-300 leading-relaxed">
+                  {formatMessage(message.text)}
+                </div>
+
+                <div className="absolute top-2 right-2 w-1 h-1 bg-neon-pink rounded-full animate-pulse opacity-50" />
+                <div className="absolute bottom-2 left-2 w-1 h-1 bg-neon-blue rounded-full animate-pulse opacity-50" style={{ animationDelay: '1s' }} />
               </div>
-              {message.sender === 'user' && (
-                <User className="w-6 h-6 text-gray-400 flex-shrink-0 mt-1" />
-              )}
             </div>
           </div>
         ))}
-        
+
         {isTyping && (
-          <div className="chat-message bot">
-            <div className="flex items-start space-x-4 max-w-3xl mx-auto">
-              <Bot className="w-6 h-6 text-beige-500 flex-shrink-0 mt-1" />
-              <div className="flex-1">
+          <div className="flex justify-start animate-slide-up">
+            <div className="neumorphic-card mr-12 p-4">
+              <div className="flex items-center space-x-2">
+                <div className="relative">
+                  <div className="absolute inset-0 bg-neon-blue rounded-full blur-sm animate-pulse" />
+                  <div className="relative bg-glass-white backdrop-blur-xl rounded-full p-1 border border-white/20">
+                    <Bot className="w-4 h-4 text-neon-blue" />
+                  </div>
+                </div>
                 <div className="flex space-x-1">
-                  <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
-                  <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-                  <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                  <div className="w-2 h-2 bg-neon-blue rounded-full animate-bounce"></div>
+                  <div className="w-2 h-2 bg-neon-blue rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                  <div className="w-2 h-2 bg-neon-blue rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
                 </div>
               </div>
             </div>
           </div>
         )}
+        
+        <div ref={messagesEndRef} />
       </div>
-      <div className="max-w-3xl mx-auto">
-        <div className="flex space-x-2">
-          <input
-            type="text"
-            value={inputValue}
-            onChange={(e) => setInputValue(e.target.value)}
-            onKeyPress={handleKeyPress}
-            placeholder="Ask about specific improvements, formatting, or any concerns..."
-            className="input-field flex-1"
-          />
-          <button
-            onClick={handleSendMessage}
-            disabled={!inputValue.trim() || isTyping}
-            className="btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            <Send className="w-4 h-4" />
-          </button>
+
+      <div className="glass-card p-4">
+        <div className="flex items-end space-x-3">
+          <div className="flex-1 relative">
+            <div className={`
+              relative transition-all duration-300
+              ${isFocused ? 'scale-105' : ''}
+            `}>
+              <textarea
+                value={inputValue}
+                onChange={(e) => setInputValue(e.target.value)}
+                onKeyPress={handleKeyPress}
+                onFocus={() => setIsFocused(true)}
+                onBlur={() => setIsFocused(false)}
+                placeholder="Ask about specific improvements, formatting, or any concerns..."
+                className="input-field w-full resize-none"
+                rows={3}
+              />
+              
+              <div className="absolute top-2 right-2 w-1 h-1 bg-neon-pink rounded-full animate-pulse" />
+              <div className="absolute bottom-2 left-2 w-1 h-1 bg-neon-blue rounded-full animate-pulse" style={{ animationDelay: '1s' }} />
+            </div>
+          </div>
+
+          <div className="flex space-x-2">
+            <button className="btn-secondary p-3 rounded-xl hover:bg-neon-blue/20 transition-colors duration-300">
+              <Paperclip className="w-5 h-5" />
+            </button>
+            <button className="btn-secondary p-3 rounded-xl hover:bg-neon-green/20 transition-colors duration-300">
+              <Mic className="w-5 h-5" />
+            </button>
+            <button className="btn-secondary p-3 rounded-xl hover:bg-neon-purple/20 transition-colors duration-300">
+              <Smile className="w-5 h-5" />
+            </button>
+            <button
+              onClick={handleSendMessage}
+              disabled={!inputValue.trim() || isTyping}
+              className="btn-gradient p-3 rounded-xl disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300"
+            >
+              <Send className="w-5 h-5" />
+            </button>
+          </div>
+        </div>
+
+        <div className="mt-4 flex flex-wrap gap-2">
+          {[
+            "How can I improve my skills section?",
+            "What formatting changes do you recommend?",
+            "Can you help with my professional summary?",
+            "What keywords should I add?"
+          ].map((suggestion, index) => (
+            <button
+              key={index}
+              onClick={() => setInputValue(suggestion)}
+              className="btn-secondary text-sm px-3 py-1 rounded-full hover:bg-neon-pink/20 transition-colors duration-300"
+            >
+              {suggestion}
+            </button>
+          ))}
         </div>
       </div>
     </div>
