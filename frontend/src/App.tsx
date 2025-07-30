@@ -247,27 +247,6 @@ function App() {
       <AnimatedBackground />
       
       <div className="relative z-10">
-        <header className="glass-card border-b border-white/10">
-          <div className="max-w-6xl mx-auto px-6 py-6">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-4">
-                <div className="relative">
-                  <div className="absolute inset-0 bg-gradient-to-r from-accent-primary to-accent-secondary rounded-full blur-xl opacity-50 animate-pulse-slow" />
-                  <div className="relative bg-white/5 backdrop-blur-xl rounded-full p-3 border border-white/10">
-                    <FileText className="w-8 h-8 text-accent-primary" />
-                  </div>
-                </div>
-                <div>
-                  <h1 className="text-3xl font-bold text-white gradient-text">
-                    Resume Recommender
-                  </h1>
-                  <p className="text-neutral-400 text-sm">AI-Powered Resume Optimization</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </header>
-
         <main className="max-w-6xl mx-auto px-6 py-12 pb-20">
           {!hasAnalyzed ? (
             <div className="space-y-12 animate-fade-in">
