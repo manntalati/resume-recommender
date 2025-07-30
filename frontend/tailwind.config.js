@@ -107,7 +107,7 @@ module.exports = {
       boxShadow: {
         'accent': '0 0 20px rgba(139, 115, 85, 0.3)',
         'accent-strong': '0 0 30px rgba(139, 115, 85, 0.5)',
-        'glass': '0 8px 32px 0 rgba(31, 38, 135, 0.37)',
+        'glass': '0 8px 32px 0 rgba(255, 255, 255, 0.1)',
         'glass-dark': '0 8px 32px 0 rgba(0, 0, 0, 0.37)',
         'neumorphism': '20px 20px 60px #bebebe, -20px -20px 60px #ffffff',
         'neumorphism-dark': '20px 20px 60px #000000, -20px -20px 60px #1a1a1a',

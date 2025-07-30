@@ -110,16 +110,16 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ resumeContent, jobContent
       <div className="glass-card p-6 mb-6">
         <div className="flex items-center space-x-4">
           <div className="relative">
-            <div className="absolute inset-0 bg-gradient-to-r from-neon-pink to-neon-blue rounded-full blur-lg opacity-50 animate-pulse-slow" />
-            <div className="relative bg-glass-white backdrop-blur-xl rounded-full p-3 border border-white/20">
-              <MessageCircle className="w-6 h-6 text-neon-pink" />
+            <div className="absolute inset-0 bg-gradient-to-r from-accent-primary to-accent-secondary rounded-full blur-lg opacity-50 animate-pulse-slow" />
+            <div className="relative bg-white/10 backdrop-blur-xl rounded-full p-3 border border-white/20">
+              <MessageCircle className="w-6 h-6 text-accent-primary" />
             </div>
           </div>
           <div>
             <h2 className="text-2xl font-bold text-white gradient-text">
               AI Career Assistant
             </h2>
-            <p className="text-gray-400 text-sm">
+            <p className="text-neutral-400 text-sm">
               Ask me anything about your resume optimization
             </p>
           </div>
@@ -144,16 +144,16 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ resumeContent, jobContent
                 <div className="flex items-center space-x-2 mb-2">
                   {message.sender === 'bot' && (
                     <div className="relative">
-                      <div className="absolute inset-0 bg-neon-blue rounded-full blur-sm animate-pulse" />
-                      <div className="relative bg-glass-white backdrop-blur-xl rounded-full p-1 border border-white/20">
-                        <Bot className="w-4 h-4 text-neon-blue" />
+                      <div className="absolute inset-0 bg-accent-secondary rounded-full blur-sm animate-pulse" />
+                      <div className="relative bg-white/10 backdrop-blur-xl rounded-full p-1 border border-white/20">
+                        <Bot className="w-4 h-4 text-accent-secondary" />
                       </div>
                     </div>
                   )}
-                  <span className="text-xs text-gray-400">
+                  <span className="text-xs text-neutral-400">
                     {message.sender === 'user' ? 'You' : 'AI Assistant'}
                   </span>
-                  <span className="text-xs text-gray-500">
+                  <span className="text-xs text-neutral-500">
                     {message.timestamp.toLocaleTimeString([], { 
                       hour: '2-digit', 
                       minute: '2-digit' 
@@ -161,31 +161,31 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ resumeContent, jobContent
                   </span>
                 </div>
 
-                <div className="text-gray-300 leading-relaxed">
+                <div className="text-neutral-300 leading-relaxed">
                   {formatMessage(message.text)}
                 </div>
 
-                <div className="absolute top-2 right-2 w-1 h-1 bg-neon-pink rounded-full animate-pulse opacity-50" />
-                <div className="absolute bottom-2 left-2 w-1 h-1 bg-neon-blue rounded-full animate-pulse opacity-50" style={{ animationDelay: '1s' }} />
+                <div className="absolute top-2 right-2 w-1 h-1 bg-accent-primary rounded-full animate-pulse opacity-50" />
+                <div className="absolute bottom-2 left-2 w-1 h-1 bg-accent-secondary rounded-full animate-pulse opacity-50" style={{ animationDelay: '1s' }} />
               </div>
             </div>
           </div>
         ))}
-
+        
         {isTyping && (
           <div className="flex justify-start animate-slide-up">
             <div className="neumorphic-card mr-12 p-4">
               <div className="flex items-center space-x-2">
                 <div className="relative">
-                  <div className="absolute inset-0 bg-neon-blue rounded-full blur-sm animate-pulse" />
-                  <div className="relative bg-glass-white backdrop-blur-xl rounded-full p-1 border border-white/20">
-                    <Bot className="w-4 h-4 text-neon-blue" />
+                  <div className="absolute inset-0 bg-accent-secondary rounded-full blur-sm animate-pulse" />
+                  <div className="relative bg-white/10 backdrop-blur-xl rounded-full p-1 border border-white/20">
+                    <Bot className="w-4 h-4 text-accent-secondary" />
                   </div>
                 </div>
                 <div className="flex space-x-1">
-                  <div className="w-2 h-2 bg-neon-blue rounded-full animate-bounce"></div>
-                  <div className="w-2 h-2 bg-neon-blue rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-                  <div className="w-2 h-2 bg-neon-blue rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                  <div className="w-2 h-2 bg-accent-secondary rounded-full animate-bounce"></div>
+                  <div className="w-2 h-2 bg-accent-secondary rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                  <div className="w-2 h-2 bg-accent-secondary rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
                 </div>
               </div>
             </div>
@@ -213,19 +213,19 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ resumeContent, jobContent
                 rows={3}
               />
               
-              <div className="absolute top-2 right-2 w-1 h-1 bg-neon-pink rounded-full animate-pulse" />
-              <div className="absolute bottom-2 left-2 w-1 h-1 bg-neon-blue rounded-full animate-pulse" style={{ animationDelay: '1s' }} />
+              <div className="absolute top-2 right-2 w-1 h-1 bg-accent-primary rounded-full animate-pulse" />
+              <div className="absolute bottom-2 left-2 w-1 h-1 bg-accent-secondary rounded-full animate-pulse" style={{ animationDelay: '1s' }} />
             </div>
           </div>
 
           <div className="flex space-x-2">
-            <button className="btn-secondary p-3 rounded-xl hover:bg-neon-blue/20 transition-colors duration-300">
+            <button className="btn-secondary p-3 rounded-xl hover:bg-accent-secondary/20 transition-colors duration-300">
               <Paperclip className="w-5 h-5" />
             </button>
-            <button className="btn-secondary p-3 rounded-xl hover:bg-neon-green/20 transition-colors duration-300">
+            <button className="btn-secondary p-3 rounded-xl hover:bg-accent-tertiary/20 transition-colors duration-300">
               <Mic className="w-5 h-5" />
             </button>
-            <button className="btn-secondary p-3 rounded-xl hover:bg-neon-purple/20 transition-colors duration-300">
+            <button className="btn-secondary p-3 rounded-xl hover:bg-accent-primary/20 transition-colors duration-300">
               <Smile className="w-5 h-5" />
             </button>
             <button
@@ -248,7 +248,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ resumeContent, jobContent
             <button
               key={index}
               onClick={() => setInputValue(suggestion)}
-              className="btn-secondary text-sm px-3 py-1 rounded-full hover:bg-neon-pink/20 transition-colors duration-300"
+              className="btn-secondary text-sm px-3 py-1 rounded-full hover:bg-accent-primary/20 transition-colors duration-300"
             >
               {suggestion}
             </button>

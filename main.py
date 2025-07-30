@@ -92,6 +92,7 @@ def analyze_resume_and_job(resume_info, job_info):
                                                 - Provide specific examples from their resume that could be enhanced to match job requirements
                                                 - Do NOT suggest adding fake or non-existent experience
                                                 - If the job posting doesn't mention specific technical skills, don't suggest adding them
+                                                
                                               
                                               IMPORTANT: The job requirements above are the ONLY skills and qualifications you should reference. Do not add generic suggestions. 
                                               Please structure your response clearly with these sections and be specific about what the job actually requires. 

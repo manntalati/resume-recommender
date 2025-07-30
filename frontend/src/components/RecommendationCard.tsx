@@ -109,6 +109,47 @@ const RecommendationCard: React.FC<RecommendationCardProps> = ({ recommendation 
     ));
   };
 
+  const handleCopy = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent card from closing
+    const formattedContent = formatContent(recommendation.content);
+    navigator.clipboard.writeText(formattedContent);
+    
+    // Show notification
+    const notification = document.createElement('div');
+    notification.className = 'notification success animate-slide-up';
+    notification.innerHTML = `
+      <div class="flex items-center space-x-3">
+        <div class="w-5 h-5 text-accent-secondary">
+          <svg fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+          </svg>
+        </div>
+        <span class="text-white">Recommendation copied to clipboard!</span>
+      </div>
+    `;
+    document.body.appendChild(notification);
+    setTimeout(() => notification.remove(), 3000);
+  };
+
+  const handleSave = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent card from closing
+    // Add save functionality here
+    const notification = document.createElement('div');
+    notification.className = 'notification success animate-slide-up';
+    notification.innerHTML = `
+      <div class="flex items-center space-x-3">
+        <div class="w-5 h-5 text-accent-secondary">
+          <svg fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+          </svg>
+        </div>
+        <span class="text-white">Recommendation saved!</span>
+      </div>
+    `;
+    document.body.appendChild(notification);
+    setTimeout(() => notification.remove(), 3000);
+  };
+
   return (
     <div
       className={`
@@ -119,22 +160,17 @@ const RecommendationCard: React.FC<RecommendationCardProps> = ({ recommendation 
       onMouseLeave={() => setIsHovered(false)}
       onClick={() => setIsExpanded(!isExpanded)}
     >
-      {/* Animated Background */}
       <div className="absolute inset-0 bg-gradient-to-br from-accent-primary/5 via-accent-secondary/5 to-accent-tertiary/5 animate-pulse-slow rounded-2xl" />
       
-      {/* Glassmorphism Card */}
       <div className={`
         relative glass-card p-6 transition-all duration-300
         ${isHovered ? getGlowColor(recommendation.type) : 'hover:shadow-glass'}
       `}>
-        {/* Floating Elements */}
         <div className="absolute top-3 right-3 w-2 h-2 bg-accent-primary rounded-full animate-pulse" />
         <div className="absolute bottom-3 left-3 w-1 h-1 bg-accent-secondary rounded-full animate-pulse" style={{ animationDelay: '1s' }} />
         
-        {/* Header */}
         <div className="flex items-start justify-between mb-4">
           <div className="flex items-center space-x-4">
-            {/* Icon Container */}
             <div className="relative">
               <div className={`absolute inset-0 bg-gradient-to-r ${getGradientColors(recommendation.type)} rounded-full blur-lg opacity-50 animate-pulse-slow`} />
               <div className="relative bg-white/5 backdrop-blur-xl rounded-full p-3 border border-white/10">
@@ -144,7 +180,6 @@ const RecommendationCard: React.FC<RecommendationCardProps> = ({ recommendation 
               </div>
             </div>
             
-            {/* Title */}
             <div>
               <h3 className="text-xl font-bold text-white gradient-text">
                 {recommendation.title}
@@ -158,7 +193,6 @@ const RecommendationCard: React.FC<RecommendationCardProps> = ({ recommendation 
             </div>
           </div>
           
-          {/* Expand/Collapse Icon */}
           <div className={`
             transform transition-transform duration-300
             ${isExpanded ? 'rotate-90' : ''}
@@ -167,35 +201,38 @@ const RecommendationCard: React.FC<RecommendationCardProps> = ({ recommendation 
           </div>
         </div>
         
-        {/* Content Preview */}
         <div className="mb-4">
           <div className="text-neutral-300 line-clamp-2">
             {renderFormattedContent(recommendation.content).slice(0, 1)}
           </div>
         </div>
         
-        {/* Expanded Content */}
         <div className={`
           overflow-hidden transition-all duration-500
-          ${isExpanded ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'}
+          ${isExpanded ? 'max-h-none opacity-100' : 'max-h-0 opacity-0'}
         `}>
           <div className="border-t border-white/10 pt-4">
-            <div className="scrollable-content formatted-text">
+            <div className="scrollable-content formatted-text max-h-80">
               {renderFormattedContent(recommendation.content)}
             </div>
           </div>
         </div>
         
-        {/* Action Buttons */}
         <div className={`
           flex space-x-3 transition-all duration-300
           ${isExpanded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'}
         `}>
-          <button className="btn-secondary flex items-center space-x-2 text-sm">
+          <button 
+            onClick={handleSave}
+            className="btn-secondary flex items-center space-x-2 text-sm"
+          >
             <Star className="w-4 h-4" />
             <span>Save</span>
           </button>
-          <button className="btn-secondary flex items-center space-x-2 text-sm">
+          <button 
+            onClick={handleCopy}
+            className="btn-secondary flex items-center space-x-2 text-sm"
+          >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
             </svg>
@@ -203,7 +240,6 @@ const RecommendationCard: React.FC<RecommendationCardProps> = ({ recommendation 
           </button>
         </div>
         
-        {/* Progress Indicator for Score */}
         {recommendation.type === 'score' && (
           <div className="mt-4">
             <div className="flex justify-between text-sm text-neutral-400 mb-2">

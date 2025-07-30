@@ -37,7 +37,7 @@ function App() {
         title: 'Resume Score',
         content: `Current Score: ${scoreMatch[1]}/100 | Target Score: ${targetMatch[1]}/100`,
         icon: <TrendingUp className="w-5 h-5" />,
-        color: 'text-green-500'
+        color: 'text-accent-secondary'
       });
     }
 
@@ -53,7 +53,7 @@ function App() {
             title: 'Missing Skills',
             content: cleanedContent,
             icon: <AlertCircle className="w-5 h-5" />,
-            color: 'text-red-500'
+            color: 'text-accent-primary'
           });
         }
       }
@@ -71,7 +71,7 @@ function App() {
             title: 'Experience Gaps',
             content: cleanedContent,
             icon: <Target className="w-5 h-5" />,
-            color: 'text-orange-500'
+            color: 'text-accent-tertiary'
           });
         }
       }
@@ -89,7 +89,7 @@ function App() {
             title: 'Content Improvements',
             content: cleanedContent,
             icon: <CheckCircle className="w-5 h-5" />,
-            color: 'text-blue-500'
+            color: 'text-accent-highlight'
           });
         }
       }
@@ -107,7 +107,7 @@ function App() {
             title: 'Specific Examples',
             content: cleanedContent,
             icon: <Lightbulb className="w-5 h-5" />,
-            color: 'text-purple-500'
+            color: 'text-accent-secondary'
           });
         }
       }
@@ -125,7 +125,7 @@ function App() {
             title: 'Formatting Suggestions',
             content: cleanedContent,
             icon: <Zap className="w-5 h-5" />,
-            color: 'text-yellow-500'
+            color: 'text-accent-tertiary'
           });
         }
       }
@@ -136,16 +136,30 @@ function App() {
 
   const cleanFormatting = (content: string): string => {
     return content
-      .replace(/\*\*/g, '')
-      .replace(/\*/g, '')
-      .replace(/^[•\*]\s*/gm, '')
-      .replace(/^\s*[•\*]\s*/gm, '')
-      .replace(/\n\s*\n/g, '\n\n')
-      .replace(/^\s+|\s+$/gm, '')
-      .replace(/^([^:]+):/gm, '**$1:**')
+      .replace(/\*\*/g, '') // Remove bold markdown
+      .replace(/\*/g, '') // Remove italic markdown
+      .replace(/^[•\*]\s*/gm, '') // Remove bullet points
+      .replace(/^\s*[•\*]\s*/gm, '') // Remove bullet points with spaces
+      .replace(/\n\s*\n/g, '\n\n') // Clean up multiple newlines
+      .replace(/^\s+|\s+$/gm, '') // Trim whitespace
+      .replace(/^([^:]+):/gm, '$1:') // Clean up headers
       .split('\n')
       .filter(line => line.trim().length > 0)
-      .map(line => line.trim())
+      .map(line => {
+        // Clean up the line and make it more readable
+        let cleanedLine = line.trim();
+        
+        // Remove any remaining markdown artifacts
+        cleanedLine = cleanedLine.replace(/^\d+\.\s*/, ''); // Remove numbered lists
+        cleanedLine = cleanedLine.replace(/^[-*]\s*/, ''); // Remove list markers
+        
+        // Capitalize first letter if it's a sentence
+        if (cleanedLine.length > 0 && /^[a-z]/.test(cleanedLine)) {
+          cleanedLine = cleanedLine.charAt(0).toUpperCase() + cleanedLine.slice(1);
+        }
+        
+        return cleanedLine;
+      })
       .join('\n\n')
       .trim();
   };
@@ -254,7 +268,7 @@ function App() {
           </div>
         </header>
 
-        <main className="max-w-6xl mx-auto px-6 py-12">
+        <main className="max-w-6xl mx-auto px-6 py-12 pb-20">
           {!hasAnalyzed ? (
             <div className="space-y-12 animate-fade-in">
               <div className="text-center mb-12">
@@ -343,7 +357,7 @@ function App() {
                 </button>
               </div>
 
-              <div className="card-grid">
+              <div className="card-grid pb-8">
                 {recommendations.map((recommendation) => (
                   <RecommendationCard
                     key={recommendation.id}
