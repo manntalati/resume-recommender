@@ -20,6 +20,10 @@ app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
+@app.route('/')
+def root():
+    return jsonify({'message': 'Resume Recommender API is running'})
+
 @app.route('/api/health')
 def health_check():
     return jsonify({'status': 'healthy'})
