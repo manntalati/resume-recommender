@@ -178,7 +178,7 @@ function App() {
       formData.append('resume', resumeFile);
       formData.append('job_link', jobLink);
 
-      const response = await fetch('/analyze', {
+      const response = await fetch('/api/analyze', {
         method: 'POST',
         body: formData,
       });

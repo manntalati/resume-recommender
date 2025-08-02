@@ -19,14 +19,25 @@
       "dest": "/app.py"
     },
     {
+      "src": "/static/(.*)",
+      "dest": "/frontend/build/static/$1"
+    },
+    {
+      "src": "/favicon.ico",
+      "dest": "/frontend/build/favicon.ico"
+    },
+    {
+      "src": "/manifest.json",
+      "dest": "/frontend/build/manifest.json"
+    },
+    {
       "src": "/(.*)",
-      "dest": "/frontend/$1"
+      "dest": "/frontend/build/index.html"
     }
   ],
   "functions": {
     "app.py": {
       "runtime": "python3.9"
     }
-  },
-  "buildCommand": "cd frontend && npm install && npm run build"
+  }
 } 

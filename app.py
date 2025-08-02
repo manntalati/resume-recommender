@@ -6,7 +6,7 @@ from main import job_posting, extract_resume_info, analyze_resume_and_job, chat_
 
 app = Flask(__name__)
 app.secret_key = 'resume-recommender-secret-key'
-CORS(app)
+CORS(app, origins="*", methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"])
 
 UPLOAD_FOLDER = 'temp_uploads'
 ALLOWED_EXTENSIONS = {'pdf'}
