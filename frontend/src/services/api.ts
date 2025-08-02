@@ -51,7 +51,7 @@ class ApiService {
     formData.append('resume', resumeFile);
     formData.append('job_link', jobLink);
 
-    const response = await fetch(`${API_BASE_URL}/analyze`, {
+    const response = await fetch(`${API_BASE_URL}/api/analyze`, {
       method: 'POST',
       body: formData,
     });
@@ -64,14 +64,14 @@ class ApiService {
   }
 
   async sendChatMessage(message: string): Promise<ChatMessage> {
-    return this.makeRequest<ChatMessage>('/chat', {
+    return this.makeRequest<ChatMessage>('/api/chat', {
       method: 'POST',
       body: JSON.stringify({ message }),
     });
   }
 
   async healthCheck(): Promise<{ status: string }> {
-    return this.makeRequest<{ status: string }>('/health');
+    return this.makeRequest<{ status: string }>('/api/health');
   }
 }
 

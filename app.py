@@ -4,7 +4,7 @@ import os
 from werkzeug.utils import secure_filename
 from main import job_posting, extract_resume_info, analyze_resume_and_job, chat_with_ai
 
-app = Flask(__name__, static_folder='frontend/build', static_url_path='')
+app = Flask(__name__)
 app.secret_key = 'resume-recommender-secret-key'
 CORS(app)
 
@@ -20,15 +20,11 @@ app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-@app.route('/')
-def serve():
-    return send_from_directory(app.static_folder, 'index.html')
-
-@app.route('/health')
+@app.route('/api/health')
 def health_check():
     return jsonify({'status': 'healthy'})
 
-@app.route('/analyze', methods=['POST'])
+@app.route('/api/analyze', methods=['POST'])
 def analyze_resume():
     try:
         if 'resume' not in request.files:
@@ -76,7 +72,7 @@ def analyze_resume():
         print(f"Error in analyze_resume: {str(e)}")
         return jsonify({'error': str(e)}), 500
     
-@app.route('/chat', methods=['POST'])
+@app.route('/api/chat', methods=['POST'])
 def chat():
     data = request.get_json()
     message = data.get('message', '')
@@ -98,12 +94,6 @@ def chat():
         return jsonify(response)
     else:
         return jsonify({'error': chat_result['error']}), 500
-    
-@app.route('/<path:path>')
-def catch_all(path):
-    if path.startswith('api/'):
-        return jsonify({'error': 'API endpoint not found'}), 404
-    return send_from_directory(app.static_folder, 'index.html')
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=3050)
