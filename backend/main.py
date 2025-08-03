@@ -1,11 +1,12 @@
-from langchain_google_genai import ChatGoogleGenerativeAI
+from langchain.chat_models import init_chat_model
 from langchain_community.document_loaders import WebBaseLoader
 from langchain_core.documents import Document
-from langchain_core.prompts import ChatPromptTemplate
-from langchain_core.output_parsers import StrOutputParser
+from langchain.prompts import ChatPromptTemplate
+from langchain.chains import LLMChain
 from langchain_google_genai import GoogleGenerativeAIEmbeddings
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_community.document_loaders import PyPDFLoader
+from langchain_core.output_parsers import StrOutputParser
 import threading
 from datetime import datetime
 from dotenv import load_dotenv
@@ -46,7 +47,7 @@ class RateLimiterRunnable:
 
 daily_limit = RateLimiter(limit=100)
 
-llm = ChatGoogleGenerativeAI(model="gemini-2.0-flash", temperature=0.8)
+llm = init_chat_model("gemini-2.0-flash", model_provider="google_genai", temperature=0.8)
 embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001")
 
 def job_posting(link):
