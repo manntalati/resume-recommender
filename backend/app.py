@@ -2,7 +2,7 @@ from flask import Flask, request, jsonify, send_from_directory, session
 from flask_cors import CORS
 import os
 from werkzeug.utils import secure_filename
-from main import job_posting, extract_resume_info, analyze_resume_and_job, chat_with_ai
+from backend.main import job_posting, extract_resume_info, analyze_resume_and_job, chat_with_ai
 
 app = Flask(__name__)
 app.secret_key = 'resume-recommender-secret-key'
