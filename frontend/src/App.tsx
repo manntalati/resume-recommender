@@ -138,8 +138,8 @@ function App() {
     return content
       .replace(/\*\*/g, '') // Remove bold markdown
       .replace(/\*/g, '') // Remove italic markdown
-      .replace(/^[•\*]\s*/gm, '') // Remove bullet points
-      .replace(/^\s*[•\*]\s*/gm, '') // Remove bullet points with spaces
+      .replace(/^[•*]\s*/gm, '') // Remove bullet points
+      .replace(/^\s*[•*]\s*/gm, '') // Remove bullet points with spaces
       .replace(/\n\s*\n/g, '\n\n') // Clean up multiple newlines
       .replace(/^\s+|\s+$/gm, '') // Trim whitespace
       .replace(/^([^:]+):/gm, '$1:') // Clean up headers
