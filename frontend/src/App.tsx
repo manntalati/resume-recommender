@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { FileText, Upload, Link, Send, AlertCircle, CheckCircle, Lightbulb, TrendingUp, Target, Zap, Sparkles, ArrowLeft } from 'lucide-react';
+import { Upload, Link, Send, AlertCircle, CheckCircle, Lightbulb, TrendingUp, Target, Zap, Sparkles, ArrowLeft } from 'lucide-react';
 import ResumeUpload from './components/ResumeUpload';
 import JobLinkInput from './components/JobLinkInput';
 import RecommendationCard from './components/RecommendationCard';
