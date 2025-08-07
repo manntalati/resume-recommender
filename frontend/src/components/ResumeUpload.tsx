@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import { Upload, FileText, X, Sparkles, CheckCircle, AlertCircle } from 'lucide-react';
+import { Upload, X, Sparkles, CheckCircle } from 'lucide-react';
 
 interface ResumeUploadProps {
   onFileSelect: (file: File | null) => void;
