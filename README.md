@@ -42,7 +42,7 @@ This tool helps job seekers improve their resumes by comparing them against actu
 - **Tailwind CSS**: Styling
 - **Lucide React**: Icons
 
-### Utilization
+## Utilization
 
 - Without having to copy the github repo and deploying everything locally, feel free to use it here: https://resume-recommender.onrender.com/
 
