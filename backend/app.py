@@ -4,7 +4,7 @@ import os
 from werkzeug.utils import secure_filename
 from main import job_posting, extract_resume_info, analyze_resume_and_job, chat_with_ai
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder="../frontend/build", static_url_path="/")
 app.secret_key = 'resume-recommender-secret-key'
 CORS(app, origins="*", methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"])
 
@@ -22,7 +22,8 @@ def allowed_file(filename):
 
 @app.route('/')
 def root():
-    return jsonify({'message': 'Resume Recommender API is running'})
+    return send_from_directory(app.static_folder, "index.html")
+    #return jsonify({'message': 'Resume Recommender API is running'})
 
 @app.route('/api/health')
 def health_check():
