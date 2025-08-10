@@ -26,6 +26,8 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ resumeContent, jobContent
   const [isTyping, setIsTyping] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const [isListening, setIsListening] = useState(false);
+  const recognitionRef = useRef<any>(null);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -103,6 +105,50 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ resumeContent, jobContent
         {line}
       </p>
     ));
+  };
+
+  useEffect(() => {
+  const SpeechRecognition =
+    (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+
+  if (!SpeechRecognition) {
+    console.warn("Speech recognition not supported in this browser");
+    return;
+  }
+
+  const recognition = new SpeechRecognition();
+  recognition.lang = 'en-US';
+  recognition.interimResults = true;
+  recognition.continuous = false;
+
+  recognition.onresult = (event: any) => {
+    let transcript = '';
+    for (let i = event.resultIndex; i < event.results.length; i++) {
+      transcript += event.results[i][0].transcript;
+    }
+    setInputValue(transcript);
+  };
+
+  recognition.onend = () => {
+    setIsListening(false);
+
+    if (inputValue.trim()) {
+      handleSendMessage();
+    }
+  };
+
+    recognitionRef.current = recognition;
+  }, [inputValue]);
+
+  const handleMicClick = () => {
+  if (!recognitionRef.current) return;
+
+  if (isListening) {
+    recognitionRef.current.stop();
+  } else {
+    recognitionRef.current.start();
+    setIsListening(true);
+  }
   };
 
   return (
@@ -222,7 +268,10 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ resumeContent, jobContent
             <button className="btn-secondary p-3 rounded-xl hover:bg-accent-secondary/20 transition-colors duration-300">
               <Paperclip className="w-5 h-5" />
             </button>
-            <button className="btn-secondary p-3 rounded-xl hover:bg-accent-tertiary/20 transition-colors duration-300">
+            <button
+              onClick={handleMicClick}
+              className={`btn-secondary p-3 rounded-xl transition-colors duration-300 ${
+                  isListening ? "bg-accent-secondary/30" : "hover:bg-accent-tertiary/20"}`}>
               <Mic className="w-5 h-5" />
             </button>
             <button className="btn-secondary p-3 rounded-xl hover:bg-accent-primary/20 transition-colors duration-300">

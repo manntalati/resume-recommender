@@ -69,11 +69,11 @@ def extract_resume_info(pdf_path):
 
 def analyze_resume_and_job(resume_info, job_info):
     prompt = ChatPromptTemplate.from_template("""You are an expert resume reviewer and career coach. Your task is to analyze a resume against a specific job posting and provide detailed, actionable feedback.
-                                              
+
                                               RESUME CONTENT: {resume_info} 
                                               
                                               ANALYZED JOB REQUIREMENTS: {job_info} 
-                                              
+
                                               ANALYSIS REQUIREMENTS: 
                                                 1. **Current Score (0-100)**: Rate how well the resume matches the specific job requirements listed above
                                                 2. **Target Score**: What the score should be after implementing recommendations
@@ -96,7 +96,7 @@ def analyze_resume_and_job(resume_info, job_info):
                                               Please structure your response clearly with these sections and be specific about what the job actually requires. 
                                               When returning your result ensure that it is in a format that will be clean and utilized by frontend services. 
                                               The results should still remain accurate but in a better formatted way so that it can be used more seamlessly and look clean from a more user interfact aspect.
-                                              """)
+                                            """)
     chain = prompt | llm | StrOutputParser()
     result = RateLimiterRunnable(chain, daily_limit)
     input = {"resume_info": resume_info, "job_info": job_info}
