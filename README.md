@@ -2,7 +2,7 @@
 
 An AI-powered web application that analyzes your resume against specific job postings to provide personalized optimization recommendations.
 
-## What it does
+## What It Does
 
 This tool helps job seekers improve their resumes by comparing them against actual job requirements. You upload your PDF resume and provide a job posting link, and the AI analyzes how well your resume matches the specific role.
 
@@ -42,6 +42,10 @@ This tool helps job seekers improve their resumes by comparing them against actu
 - **Tailwind CSS**: Styling
 - **Lucide React**: Icons
 
+## Utilization
+
+- Without having to copy the github repo and deploying everything locally, feel free to use it here: https://resume-recommender.onrender.com/
+
 ## Setup
 
 ### Prerequisites
@@ -66,7 +70,7 @@ cd frontend
 npm install
 ```
 
-### Running the Application
+### Running the Application Locally
 ```bash
 # Backend (port 3050)
 python app.py
