@@ -37,6 +37,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ resumeContent, jobContent
     scrollToBottom();
   }, [messages]);
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const handleSendMessage = async () => {
     if (!inputValue.trim()) return;
 
