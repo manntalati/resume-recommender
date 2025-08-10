@@ -73,7 +73,6 @@ def analyze_resume_and_job(resume_info, job_info):
     result = RateLimiterRunnable(chain, daily_limit)
     input = {"resume_info": resume, "job_info": job}
     result.invoke(input=input)
-    #result = chain.invoke({"resume_info": resume, "job_info": job})
     return result
     
 

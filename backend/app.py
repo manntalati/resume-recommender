@@ -23,7 +23,6 @@ def allowed_file(filename):
 @app.route('/')
 def root():
     return send_from_directory(app.static_folder, "index.html")
-    #return jsonify({'message': 'Resume Recommender API is running'})
 
 @app.route('/api/health')
 def health_check():
