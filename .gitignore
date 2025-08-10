@@ -1,7 +1,7 @@
 # File Specific
 virtualenv/
 temp_uploads/
-Jake_s_Resume__Anonymous_.pdf
+test.py
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
