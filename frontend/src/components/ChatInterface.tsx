@@ -139,7 +139,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ resumeContent, jobContent
   };
 
     recognitionRef.current = recognition;
-  }, [inputValue]);
+  }, [inputValue, handleSendMessage]);
 
   const handleMicClick = () => {
   if (!recognitionRef.current) return;
