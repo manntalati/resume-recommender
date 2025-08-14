@@ -44,7 +44,7 @@ This tool helps job seekers improve their resumes by comparing them against actu
 
 ## Utilization
 
-- Without having to copy the github repo and deploying everything locally, feel free to use it here: https://resume-recommender.onrender.com/
+- Without having to copy the github repo and deploying everything locally, feel free to use it here: [https://resume-recommender.onrender.com/](https://resume-recommender-b5ei.onrender.com)
 
 ## Setup
 
